@@ -1,0 +1,10 @@
+{
+	"Data":[
+	{
+		"Array" : [0,0,0,0,0,0,0,0,0,0],
+		"Training_error" : 10000000,
+		"Validation_error" : 1000000
+	}
+	]
+
+}
