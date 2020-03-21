@@ -44,7 +44,11 @@ def send_request(id, vector, path):
         exit()
 
     return response
-
+def datasort():
+    with open('data.json') as f:
+        data = json.load(f)
+    
+        
 def Cross_2parent():
     with open('data.json') as f:
         data = json.load(f)
