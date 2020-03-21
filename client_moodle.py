@@ -94,12 +94,13 @@ if __name__ == "__main__":
     Replace "i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf" with your secret ID and just run this file 
     to verify that the server is working for your ID.
     """
-    vector = BitComplement()
-    err = get_errors('JtabQSXoKd2CihU78SWRmmvFUqe7N2yFho55eMMQbplTwMGxus', vector)
-    assert len(err) == 2
-    print(err)
-    if(len(err) == 2 and len(arr) == 11):
-        Add_To_File(vector,err)
+    for i in range(5):
+        vector = BitComplement()
+        err = get_errors('3a1bPcaPVlB2IaaIobK7p1oDI8GTMwxcXET6VNPD3Rv5UAeaOp', vector)
+        assert len(err) == 2
+        print(err)
+        if(len(err) == 2 and len(arr) == 11):
+            Add_To_File(vector,err)
     
 
     # submit_status = submit('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', list(-np.arange(0,1.1,0.1)))
