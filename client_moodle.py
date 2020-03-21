@@ -45,6 +45,14 @@ def send_request(id, vector, path):
 
     return response
 
+def Cross_2parent():
+    with open('data.json') as f:
+        data = json.load(f)
+    vector1 = random.choice(data)["arr"]
+    vector2 = random.choice(data)["arr"]
+    vector = vector
+    # for i in range(len(vector)):
+        
 def BitComplement():
     with open('data.json') as f:
         data = json.load(f)
@@ -87,7 +95,7 @@ if __name__ == "__main__":
     to verify that the server is working for your ID.
     """
     vector = BitComplement()
-    err = get_errors('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', vector)
+    err = get_errors('JtabQSXoKd2CihU78SWRmmvFUqe7N2yFho55eMMQbplTwMGxus', vector)
     assert len(err) == 2
     print(err)
     if(len(err) == 2 and len(arr) == 11):
