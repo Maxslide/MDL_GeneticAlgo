@@ -44,17 +44,22 @@ def send_request(id, vector, path):
         exit()
 
     return response
-def datasort():
-    with open('data.json') as f:
+def datasort(filetoopen):
+    with open(filetopopen) as f:
         data = json.load(f)
-    
+    n = len(data)
+    for i in range(n):
+        for j in range(n-i-1):
+            if((data[j]["Verr"] - data[j]["Terr"]) > (data[j+1]["Verr"] - data[j+1]["Terr"])):
+                data[j],data[j+1] = data[j+1],data[j]
+    return data
         
 def Cross_2parent():
-    with open('data.json') as f:
-        data = json.load(f)
-    vector1 = random.choice(data)["arr"]
-    vector2 = random.choice(data)["arr"]
-    vector = vector
+    data = datasort(<filename here>)
+    vector1 = random.choice(data[:4])["arr"]
+    vector2 = random.choice(data[:4])["arr"]
+    vectorselect = {"1" : vector1, "2":vector2}
+    
     # for i in range(len(vector)):
         
 def BitComplement():
