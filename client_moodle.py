@@ -6,6 +6,7 @@ import random
 API_ENDPOINT = 'http://10.4.21.147'
 PORT = 3000
 MAX_DEG = 11
+ID = 'i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf'
 arr = [0.0, 0.1240317450077846, -6.211941063144333, 0.04933903144709126, 0.03810848157715883, 8.132366097133624e-05, -6.018769160916912e-05, -1.251585565299179e-07, 3.484096383229681e-08, 4.1614924993407104e-11, -6.732420176902565e-12]
 #### functions that you can call
 # def modify_decimal(test_arr):
@@ -44,9 +45,7 @@ def send_request(id, vector, path):
         exit()
 
     return response
-def datasort(filetoopen):
-    with open(filetopopen) as f:
-        data = json.load(f)
+def datasort(data): 
     n = len(data)
     for i in range(n):
         for j in range(n-i-1):
@@ -55,10 +54,58 @@ def datasort(filetoopen):
     return data
         
 def Cross_2parent():
-    data = datasort(<filename here>)
-    vector1 = random.choice(data[:4])["arr"]
-    vector2 = random.choice(data[:4])["arr"]
+   with open('Cross2Parent.json') as f:
+        y = json.load(f)
+    data = datasort(y)
+    vector1 = random.choice(data[:6])["arr"]
+    vector2 = random.choice(data[:6])["arr"]
     vectorselect = {"1" : vector1, "2":vector2}
+    for i in range(4):
+        vector1 = random.choice(data[:6])["arr"]
+        vector2 = random.choice(data[:6])["arr"]
+        vectorselect = {"1" : vector1, "2":vector2}
+        vector = vector1
+        flag = 0
+        ran = random.choice(list(range(11)))
+        vec = random.choice(list(range(1,3)))
+        vec2 = 2
+        if(vec == 2):
+            vec2 = 1
+        vector[:ran] = vectorselect[str(vec)][:ran]
+        vector[ran:11] = vectorselect[str(vec2)][ran:11]        
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
+        print(temp)
+        y.append(temp)
+    for i in range(4,33):
+        vector1 = random.choice(data)["arr"]
+        vector2 = random.choice(data)["arr"]
+        vectorselect = {"1" : vector1, "2":vector2}
+        vector = vector1
+        ran = random.choice(list(range(11)))
+        vec = random.choice(list(range(1,3)))
+        vec2 = 2
+        if(vec == 2):
+            vec2 = 1
+        vector[:ran] = vectorselect[str(vec)][:ran]
+        vector[ran:11] = vectorselect[str(vec2)][ran:11]
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
+        print(temp)
+        y.append(temp)
+    ytemp = y
+    newdata = datasort(y)[:30]
+    newdata.append(random.choice(y[33:]))
+    newdata.append(random.choice(y[33:]))
+    newdata.append(random.choice(y[33:]))
+    with open('Cross2Parent.json','w') as f:
+        json.dump(newdata[:33],f,indent=4)
+    # for i in range(len(vector)):
+    vectorselect = {"1" : vector1, "2":vector2}
+    vector = vector1
+    for i in range(len(vector)):
+        vector[i] = vectorselect[str(random.choice(list(range(1,3))))][i]
+    # This crossover involves crossing between parents such that few componets of parent A are taken and few of parent B are taken to generate the new child
     
     # for i in range(len(vector)):
         
@@ -88,6 +135,8 @@ def BitComplement():
             # print(i)
             vector[i] = float(''.join(temp))
     return vector 
+   
+   
         
 def Add_To_File(arr,err):
     with open('data.json') as f:
@@ -103,13 +152,14 @@ if __name__ == "__main__":
     Replace "i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf" with your secret ID and just run this file 
     to verify that the server is working for your ID.
     """
-    for i in range(5):
-        vector = BitComplement()
-        err = get_errors('3a1bPcaPVlB2IaaIobK7p1oDI8GTMwxcXET6VNPD3Rv5UAeaOp', vector)
-        assert len(err) == 2
-        print(err)
-        if(len(err) == 2 and len(arr) == 11):
-            Add_To_File(vector,err)
+    for i in range(7):
+        # vector = BitComplement()
+        # err = get_errors(ID, vector)
+        # assert len(err) == 2
+        # print(err)
+        # if(len(err) == 2 and len(arr) == 11):
+        #     Add_To_File(vector,err)
+        Cross_2parent()
     
 
     # submit_status = submit('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', list(-np.arange(0,1.1,0.1)))
