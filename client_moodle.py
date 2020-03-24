@@ -8,7 +8,7 @@ API_ENDPOINT = 'http://10.4.21.147'
 PORT = 3000
 MAX_DEG = 11
 ID = 'i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf'
-Suboh_I = 'UD0Abfeia9ERjD84CMjuc2ZzEV7oa7n23m24gFUe1u5AN66tVm'
+# Suboh_I = 'UD0Abfeia9ERjD84CMjuc2ZzEV7oa7n23m24gFUe1u5AN66tVm'
 arr = [0.0, 0.1240317450077846, -6.211941063144333, 0.04933903144709126, 0.03810848157715883, 8.132366097133624e-05, -6.018769160916912e-05, -1.251585565299179e-07, 3.484096383229681e-08, 4.1614924993407104e-11, -6.732420176902565e-12]
 #### functions that you can call
 # def modify_decimal(test_arr):
@@ -48,24 +48,24 @@ def send_request(id, vector, path):
 
     return response
 def datasort(data): 
-    n = len(data)
-    for i in range(n):
-        for j in range(n-i-1):
-            if((data[j]["Verr"] - data[j]["Terr"]) > (data[j+1]["Verr"] - data[j+1]["Terr"])):
-                data[j],data[j+1] = data[j+1],data[j]
-    return data
     # n = len(data)
     # for i in range(n):
     #     for j in range(n-i-1):
-    #         if((data[j]["Verr"] + 0.7*data[j]["Terr"]) > (data[j+1]["Verr"] +0.7*data[j+1]["Terr"])):
+    #         if((data[j]["Verr"] - 2*data[j]["Terr"]) > (data[j+1]["Verr"] - 2*data[j+1]["Terr"])):
     #             data[j],data[j+1] = data[j+1],data[j]
     # return data
+    n = len(data)
+    for i in range(n):
+        for j in range(n-i-1):
+            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] +data[j+1]["Terr"])):
+                data[j],data[j+1] = data[j+1],data[j]
+    return data
 
 def fitnessProb(data):
     fitness = []
     for i in data:
-        fitness.append(1/(i["Verr"] - 2*i["Terr"]))
-        # fitness.append(1/(i["Verr"] + 0.7*i["Terr"]))
+        # fitness.append(1/abs(i["Verr"] - 2*i["Terr"]))
+        fitness.append(1/(i["Verr"] + i["Terr"]))
     sums = sum(fitness)
     for i in range(len(fitness)):
         fitness[i] = fitness[i]/sums
@@ -91,30 +91,30 @@ def Cross_2parent():
         vector[:] = vector1[:]  
         ran = random.choice(list(range(3,11)))
         vector[ran:] = vector2[ran:]
-        for i in range(3):
+        for i in range(8):
             if(random.choice(list(range(2))) == 1):
-                mut = random.choice(list(range(1,11)))
+                mut = random.choice(list(range(1,ran)))
                 temp = list(str(vector[mut]))
                 temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
                 temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
                 temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
                 vector[mut] = float(''.join(temp))
-        err = get_errors(Suboh_I,vector)
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
         print(temp)
         y.append(temp)
         vector[:] = vector2[:]
         # ran = random.choice(list(range(11)))
         vector[ran:] = vector1[ran:]
-        for i in range(3):
+        for i in range(8):
             if(random.choice(list(range(2))) == 1):
-                mut = random.choice(list(range(1,11)))
+                mut = random.choice(list(range(1,ran)))
                 temp = list(str(vector[mut]))
                 temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
                 temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
                 temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
                 vector[mut] = float(''.join(temp))
-        err = get_errors(Suboh_I,vector)
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
         print(temp)
         y.append(temp)
@@ -176,7 +176,7 @@ def Croos2_sumnew():
         data = json.load(f)
     y = []
     y[:] = data[:]
-    print(y[0])
+    # print(y[0])
     prob = fitnessProb(y)
     listpair = []
     for i in range(0,16,2):
@@ -193,34 +193,36 @@ def Croos2_sumnew():
                 break
         vector1 = y[ran1]["arr"]
         vector2 = y[ran2]["arr"]
-        ran = random.choice(list(range(16)))
+        ran = random.choice(list(range(2,11)))
         vector = []
         vector[:] = vector1[:]
         # vector[:ran] = vector1[:ran]
         vector[ran:] = vector2[ran:]
-        for i in range(3):
+        for i in range(5):
             if(random.choice(list(range(2))) == 1):
-                mut = random.choice(list(range(1,11)))
+                mut = random.choice(list(range(ran)))
                 temp = list(str(vector[mut]))
-                temp[random.choice(range(5,14))] = str(random.choice(list(range(10))))
-                temp[random.choice(range(5,14))] = str(random.choice(list(range(10))))
-                temp[random.choice(range(5,14))] = str(random.choice(list(range(10))))
+                # print(temp)
+                # print(mut)
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
                 vector[mut] = float(''.join(temp))
-        err = get_errors(Suboh_I,vector)
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print(temp)
         y.append(temp)
         vector[:] = vector2[:]
         vector[ran:] = vector1[ran:]
-        for i in range(3):
+        for i in range(5):
             if(random.choice(list(range(2))) == 1):
-                mut = random.choice(list(range(1,11)))
+                mut = random.choice(list(range(ran)))
                 temp = list(str(vector[mut]))
-                temp[random.choice(range(5,14))] = str(random.choice(list(range(10))))
-                temp[random.choice(range(5,14))] = str(random.choice(list(range(10))))
-                temp[random.choice(range(5,14))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
                 vector[mut] = float(''.join(temp))
-        err = get_errors(Suboh_I,vector)
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print(temp)
         y.append(temp)
@@ -240,6 +242,77 @@ def Croos2_sumnew():
         final[i]["Child"] = 0
     with open('differencesimilardata.json','w') as f:
         json.dump(final,f,indent=2)
+    with open('data.json') as f:
+        datas = json.load(f)
+    datas.append(final)
+    with open('data.json','w') as f:
+        json.dump(datas,f,indent=2)
+    
+def Croos2_sumnewran():
+    with open('differencesimilardata.json') as f:
+        data = json.load(f)
+    y = []
+    y[:] = data[:]
+    # print(y[0])
+    prob = fitnessProb(y)
+    listpair = []
+    for i in range(0,16,2):
+        ran1 = 0
+        ran2 = 0
+        while True:
+            ran1 = random.choice(prob)
+            while(True):
+                ran2 = random.choice(prob)
+                if(ran2 != ran1):
+                    break
+            if((ran1,ran2) not in listpair):
+                listpair.append((ran1,ran2))
+                break
+        vector1 = y[ran1]["arr"]
+        vector2 = y[ran2]["arr"]
+        vector = []
+        vector[:] = vector1[:]
+        for i in range(len(vector)):
+            if(random.choice(list(range(2))) == 1):
+                vector[i] = vector2[i]
+        # vector[:ran] = vector1[:ran]
+        # vector[ran:] = vector2[ran:]
+        for i in range(5):
+            if(random.choice(list(range(2))) == 1):
+                mut = random.choice(list(range(11)))
+                temp = list(str(vector[mut]))
+                # print(temp)
+                # print(mut)
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(5,12))] = str(random.choice(list(range(10))))
+                vector[mut] = float(''.join(temp))
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
+        print(temp)
+        y.append(temp)
+    newdata = datasort(y)
+    final = []
+    final[:10] = newdata[:10]
+    fin = 0
+    for i in range(10,32):
+        if(newdata[i]["Child"] == 1):
+            final.append(newdata[i])
+            fin += 1
+        if(fin == 2):
+            break
+    for i in range(len(final),16):
+        final.append(random.choice(newdata))
+    for i in range(len(final)):
+        final[i]["Child"] = 0
+    with open('differencesimilardata.json','w') as f:
+        json.dump(final,f,indent=2)
+    with open('data.json') as f:
+        datas = json.load(f)
+    datas.append(final)
+    with open('data.json','w') as f:
+        json.dump(datas,f,indent=2)
+        
         
 
 def Crossmid():
@@ -353,14 +426,14 @@ if __name__ == "__main__":
     #         diction = {"1": random.uniform(0,1.4),"3":random.uniform(0,1.4),}
 
             # -1.257587505299179e-07,
-    for i in range(10):
+    for i in range(20):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
         # print(err)
         # if(len(err) == 2 and len(arr) == 11):
         #     Add_To_File(vector,err)
-        Croos2_sumnew()
+        Croos2_sumnewran()
 
     # submit_status = submit('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', list(-np.arange(0,1.1,0.1)))
     # assert "submitted" in submit_status
