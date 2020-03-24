@@ -49,30 +49,121 @@ def datasort(data):
     n = len(data)
     for i in range(n):
         for j in range(n-i-1):
-            if((data[j]["Verr"] - data[j]["Terr"]) > (data[j+1]["Verr"] - data[j+1]["Terr"])):
+            if((data[j]["Verr"] + 0.75*data[j]["Terr"]) > (data[j+1]["Verr"] + 0.75*data[j+1]["Terr"])):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
         
 def Cross_2parent():
-   with open('Cross2Parent.json') as f:
+    with open('Cross2_copyof23March.json') as f:
+        y = json.load(f)
+    data = datasort(y)
+    vector1 = random.choice(data[:6])["arr"]
+    vector2 = random.choice(data[:6])["arr"]
+    vector = vector1
+    vectorselect = {"1" : vector1, "2":vector2}
+    for i in range(1,5):
+        vector1 = data[0]["arr"]
+        vector2 = data[i]["arr"]
+        # vectorselect = {"1" : vector1, "2":vector2}
+        vector[:] = vector1[:]  
+        ran = random.choice(list(range(6,11)))
+        vector[ran:] = vector2[ran:]
+        for i in range(3):
+            if(random.choice(list(range(2))) == 1):
+                mut = random.choice(list(range(1,11)))
+                temp = list(str(vector[mut]))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                vector[mut] = float(''.join(temp))
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
+        print(temp)
+        y.append(temp)
+        vector[:] = vector2[:]
+        # ran = random.choice(list(range(11)))
+        vector[ran:] = vector1[ran:]
+        for i in range(3):
+            if(random.choice(list(range(2))) == 1):
+                mut = random.choice(list(range(1,11)))
+                temp = list(str(vector[mut]))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                vector[mut] = float(''.join(temp))
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
+        print(temp)
+        y.append(temp)
+    for i in range(5,16):
+        vector1 = random.choice(data)["arr"]
+        vector2 = random.choice(data)["arr"]
+        vectorselect = {"1" : vector1, "2":vector2}
+        vector[:] = vector1[:]  
+        ran = random.choice(list(range(6,11)))
+        vector[ran:] = vector2[ran:]
+        for i in range(3):
+            if(random.choice(list(range(2))) == 1):
+                mut = random.choice(list(range(1,11)))
+                temp = list(str(vector[mut]))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                vector[mut] = float(''.join(temp))
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
+        print(temp)
+        y.append(temp)
+        vector[:] = vector2[:]
+        # ran = random.choice(list(range(11)))
+        vector[ran:] = vector1[ran:]
+        for i in range(3):
+            if(random.choice(list(range(2))) == 1):
+                mut = random.choice(list(range(1,11)))
+                temp = list(str(vector[mut]))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                temp[random.choice(range(8,16))] = str(random.choice(list(range(10))))
+                vector[mut] = float(''.join(temp))
+        err = get_errors(ID,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
+        print(temp)
+        y.append(temp)
+    ytemp = y
+    ytemp[:] = y[:]
+    newdata = datasort(y)[:25]
+    childy = datasort(ytemp[32:])
+    for i in childy:
+        if i not in newdata:
+            newdata.append(i)
+    with open('Cross2_copyof23March','w') as f:
+        json.dump(newdata[:32],f,indent=4)
+    # for i in range(len(vector)):
+    vectorselect = {"1" : vector1, "2":vector2}
+    vector = vector1
+    for i in range(len(vector)):
+        vector[i] = vectorselect[str(random.choice(list(range(1,3))))][i]
+    # This crossover involves crossing between parents such that few componets of parent A are taken and few of parent B are taken to generate the new child
+    
+    # for i in range(len(vector)):
+        
+    return
+def Crossmid():
+    with open('Crossmid.json') as f:
         y = json.load(f)
     data = datasort(y)
     vector1 = random.choice(data[:6])["arr"]
     vector2 = random.choice(data[:6])["arr"]
     vectorselect = {"1" : vector1, "2":vector2}
     for i in range(4):
-        vector1 = random.choice(data[:6])["arr"]
-        vector2 = random.choice(data[:6])["arr"]
+        vector1 = random.choice(data[0:6])["arr"]
+        vector2 = random.choice(data[0:6])["arr"]
         vectorselect = {"1" : vector1, "2":vector2}
         vector = vector1
-        flag = 0
-        ran = random.choice(list(range(11)))
-        vec = random.choice(list(range(1,3)))
-        vec2 = 2
-        if(vec == 2):
-            vec2 = 1
-        vector[:ran] = vectorselect[str(vec)][:ran]
-        vector[ran:11] = vectorselect[str(vec2)][ran:11]        
+        for i in range(len(vector)):
+            vector[i] += vector2[i]
+            vector[i] /= 2
+        # vector[random.choice(list())] =
         err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
         print(temp)
@@ -82,24 +173,20 @@ def Cross_2parent():
         vector2 = random.choice(data)["arr"]
         vectorselect = {"1" : vector1, "2":vector2}
         vector = vector1
-        ran = random.choice(list(range(11)))
-        vec = random.choice(list(range(1,3)))
-        vec2 = 2
-        if(vec == 2):
-            vec2 = 1
-        vector[:ran] = vectorselect[str(vec)][:ran]
-        vector[ran:11] = vectorselect[str(vec2)][ran:11]
+        for i in range(len(vector)):
+            vector[i] += vector2[i]
+            vector[i] /= 2
         err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1]}
-        print(temp)
+        # print(temp)
         y.append(temp)
     ytemp = y
     newdata = datasort(y)[:30]
     newdata.append(random.choice(y[33:]))
     newdata.append(random.choice(y[33:]))
     newdata.append(random.choice(y[33:]))
-    with open('Cross2Parent.json','w') as f:
-        json.dump(newdata[:33],f,indent=4)
+    with open('Crossmid.json','w') as f:
+        json.dump(newdata,f,indent=4)
     # for i in range(len(vector)):
     vectorselect = {"1" : vector1, "2":vector2}
     vector = vector1
@@ -152,7 +239,27 @@ if __name__ == "__main__":
     Replace "i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf" with your secret ID and just run this file 
     to verify that the server is working for your ID.
     """
-    for i in range(7):
+    # vector = [
+    #         0.0,
+    #         0.0,
+    #         0.0,
+    #         0.0,
+    #         0.0,
+    #         0.0,
+    #         0.0,
+    #         -1.251585565299179e-07,
+    #         0.0,
+    #         4.16139459954071e-11,
+    #         0.0
+    #     ]
+    # print(get_errors(ID,vector))
+    # for i in range(20):
+    #     arr = vector[:]
+    #     for i in range(len(arr)):
+    #         diction = {"1": random.uniform(0,1.4),"3":random.uniform(0,1.4),}
+
+            # -1.257587505299179e-07,
+    for i in range(4):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
