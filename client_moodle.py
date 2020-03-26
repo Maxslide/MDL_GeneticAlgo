@@ -56,8 +56,9 @@ def datasort(data):
     # return data
     n = len(data)
     for i in range(n):
+        
         for j in range(n-i-1):
-            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] +data[j+1]["Terr"])):
+            if(abs(data[j]["Verr"]**2 - 3.5*data[j]["Terr"]**2) > abs(data[j+1]["Verr"]**2 - 3.5*data[j+1]["Terr"]**2)):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
 
@@ -171,13 +172,80 @@ def Cross_2parent():
     # for i in range(len(vector)):
     
     return
+def verificationmin():
+    with open('a2-b2.json') as f:
+        data = json.load(f)
+    y = []
+    y[:] = data[:]
+    print(len(y))
+    # print(y[0])
+    # prob = fitnessProb(y)
+    listpair = []
+    for i in range(0,32):
+        ran1 = 0
+        ran2 = 0
+        while True:
+            ran1 = random.choice(list(range(32)))
+            while(True):
+                ran2 = random.choice(list(range(32)))
+                if(ran2 != ran1):
+                    break
+            if((ran1,ran2) not in listpair):
+                listpair.append((ran1,ran2))
+                break
+        vector1 = y[ran1]["arr"]
+        vector2 = y[ran2]["arr"]
+        vector = []
+        prob = [1,1,1,1,2,2,2,2,0,0]
+        for i in range(len(vector1)):
+            t = random.choice(prob)
+            if(t == 1):
+                vector.append(vector1[i])
+            elif(t == 2):
+                vector.append(vector2[i])
+            else:
+                n = random.uniform(-10,10)
+                n = n/10**(i+1)    
+                if(i > 5):
+                    n = n/10**3
+                vector.append(random.choice([vector1,vector2])[i] + n)
+        err = get_errors(Suboh_I,vector)
+        temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
+        print(temp)
+        y.append(temp)
+    newdata = datasort(y)
+    final = []
+    final[:24] = newdata[:24]
+    fin = 0
+    for i in range(24,64):
+        if(newdata[i]["Child"] == 1):
+            final.append(newdata[i])
+            fin += 1
+        if(fin == 4):
+            break
+    fin = 0
+    for i in range(24,64):
+        if(newdata[i]["Child"] == 0):
+            final.append(newdata[i])
+            fin += 1
+        if(fin == 4):
+            break
+    for i in range(len(final)):
+        final[i]["Child"] = 0
+    with open('a2-b2.json','w') as f:
+        json.dump(final,f,indent=2)
+    with open('data.json') as f:
+        datas = json.load(f)
+    datas.append(final)
+    with open('data.json','w') as f:
+        json.dump(datas,f,indent=2)
+
 def Croos2_sumnew():
     with open('differencesimilardata.json') as f:
         data = json.load(f)
     y = []
     y[:] = data[:]
     # print(y[0])
-    prob = fitnessProb(y)
     listpair = []
     for i in range(0,16,2):
         ran1 = 0
@@ -426,14 +494,14 @@ if __name__ == "__main__":
     #         diction = {"1": random.uniform(0,1.4),"3":random.uniform(0,1.4),}
 
             # -1.257587505299179e-07,
-    for i in range(20):
+    for i in range(10):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
         # print(err)
         # if(len(err) == 2 and len(arr) == 11):
         #     Add_To_File(vector,err)
-        Croos2_sumnewran()
+        verificationmin()
 
     # submit_status = submit('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', list(-np.arange(0,1.1,0.1)))
     # assert "submitted" in submit_status
