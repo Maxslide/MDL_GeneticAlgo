@@ -8,6 +8,7 @@ API_ENDPOINT = 'http://10.4.21.147'
 PORT = 3000
 MAX_DEG = 11
 ID = 'i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf'
+# Radhz = 'bTcDQRvCITniLCqT38zzd4CaYs8gPsrnjxyZyIVTiTv6DyX0kX'
 # Suboh_I = 'UD0Abfeia9ERjD84CMjuc2ZzEV7oa7n23m24gFUe1u5AN66tVm'
 arr = [0.0, 0.1240317450077846, -6.211941063144333, 0.04933903144709126, 0.03810848157715883, 8.132366097133624e-05, -6.018769160916912e-05, -1.251585565299179e-07, 3.484096383229681e-08, 4.1614924993407104e-11, -6.732420176902565e-12]
 #### functions that you can call
@@ -48,19 +49,19 @@ def send_request(id, vector, path):
 
     return response
 def datasort(data): 
-    # n = len(data)
-    # for i in range(n):
-    #     for j in range(n-i-1):
-    #         if((data[j]["Verr"] - 2*data[j]["Terr"]) > (data[j+1]["Verr"] - 2*data[j+1]["Terr"])):
-    #             data[j],data[j+1] = data[j+1],data[j]
-    # return data
     n = len(data)
     for i in range(n):
-        
         for j in range(n-i-1):
-            if(abs(data[j]["Verr"]**2 - 3.5*data[j]["Terr"]**2) > abs(data[j+1]["Verr"]**2 - 3.5*data[j+1]["Terr"]**2)):
+            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] + data[j+1]["Terr"])):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
+    # n = len(data)
+    # for i in range(n):
+        
+    #     for j in range(n-i-1):
+    #         if(abs((data[j]["Verr"] + data[j]["Terr"])*(data[j]["Verr"] - data[j]["Terr"])) > abs((data[j]["Verr"] + data[j]["Terr"])*(data[j]["Verr"] - data[j]["Terr"]))):
+    #             data[j],data[j+1] = data[j+1],data[j]
+    # return data
 
 def fitnessProb(data):
     fitness = []
@@ -185,9 +186,9 @@ def verificationmin():
         ran1 = 0
         ran2 = 0
         while True:
-            ran1 = random.choice(list(range(32)))
+            ran1 = random.choice(list(range(24)))
             while(True):
-                ran2 = random.choice(list(range(32)))
+                ran2 = random.choice(list(range(24)))
                 if(ran2 != ran1):
                     break
             if((ran1,ran2) not in listpair):
@@ -196,7 +197,7 @@ def verificationmin():
         vector1 = y[ran1]["arr"]
         vector2 = y[ran2]["arr"]
         vector = []
-        prob = [1,1,1,1,2,2,2,2,0,0]
+        prob = [1,1,1,1,2,2,2,2,1,2,1,2,0,0]
         for i in range(len(vector1)):
             t = random.choice(prob)
             if(t == 1):
@@ -204,27 +205,27 @@ def verificationmin():
             elif(t == 2):
                 vector.append(vector2[i])
             else:
-                n = random.uniform(-10,10)
-                n = n/10**(i+1)    
-                if(i > 5):
-                    n = n/10**3
-                vector.append(random.choice([vector1,vector2])[i] + n)
-        err = get_errors(Suboh_I,vector)
+                # n = random.uniform(-10,10)
+                # n = n/10**(i+1)    
+                # if(i > 5):
+                #     n = n/10**3
+                vector.append(random.choice([vector1,vector2])[i]*random.choice([1.1,0.9]))
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print(temp)
         y.append(temp)
     newdata = datasort(y)
     final = []
-    final[:24] = newdata[:24]
+    final[:18] = newdata[:18]
     fin = 0
-    for i in range(24,64):
+    for i in range(18,56):
         if(newdata[i]["Child"] == 1):
             final.append(newdata[i])
             fin += 1
-        if(fin == 4):
+        if(fin == 2):
             break
     fin = 0
-    for i in range(24,64):
+    for i in range(18,56):
         if(newdata[i]["Child"] == 0):
             final.append(newdata[i])
             fin += 1
@@ -239,6 +240,7 @@ def verificationmin():
     datas.append(final)
     with open('data.json','w') as f:
         json.dump(datas,f,indent=2)
+    return final
 
 def Croos2_sumnew():
     with open('differencesimilardata.json') as f:
@@ -494,14 +496,17 @@ if __name__ == "__main__":
     #         diction = {"1": random.uniform(0,1.4),"3":random.uniform(0,1.4),}
 
             # -1.257587505299179e-07,
-    for i in range(10):
+    submissionar = []
+    for i in range(20):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
         # print(err)
         # if(len(err) == 2 and len(arr) == 11):
         #     Add_To_File(vector,err)
-        verificationmin()
+        submissionar = verificationmin()
+    for i in submissionar:
+        print(submit(ID,i["arr"]))
 
     # submit_status = submit('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', list(-np.arange(0,1.1,0.1)))
     # assert "submitted" in submit_status
