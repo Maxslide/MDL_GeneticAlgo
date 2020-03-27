@@ -52,7 +52,7 @@ def datasort(data):
     n = len(data)
     for i in range(n):
         for j in range(n-i-1):
-            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] + data[j+1]["Terr"])):
+            if((data[j]["Verr"] + 2*data[j]["Terr"]) > (data[j+1]["Verr"] + 2*data[j+1]["Terr"])):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
     # n = len(data)
@@ -197,7 +197,7 @@ def verificationmin():
         vector1 = y[ran1]["arr"]
         vector2 = y[ran2]["arr"]
         vector = []
-        prob = [1,1,1,1,2,2,2,2,1,2,1,2,0,0]
+        prob = [1,1,1,1,2,2,2,2,1,2,1,2,0,0,0]
         for i in range(len(vector1)):
             t = random.choice(prob)
             if(t == 1):
@@ -205,11 +205,11 @@ def verificationmin():
             elif(t == 2):
                 vector.append(vector2[i])
             else:
-                # n = random.uniform(-10,10)
-                # n = n/10**(i+1)    
-                # if(i > 5):
-                #     n = n/10**3
-                vector.append(random.choice([vector1,vector2])[i]*random.choice([1.1,0.9]))
+                n = random.uniform(-10,10)
+                n = n/(10)**(i+1)    
+                if(i > 5):
+                    n = n/10**3
+                vector.append(random.choice([vector1,vector2])[i] + n)
         err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print(temp)
@@ -497,7 +497,7 @@ if __name__ == "__main__":
 
             # -1.257587505299179e-07,
     submissionar = []
-    for i in range(20):
+    for i in range(4):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
