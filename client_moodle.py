@@ -52,7 +52,7 @@ def datasort(data):
     n = len(data)
     for i in range(n):
         for j in range(n-i-1):
-            if((data[j]["Verr"] + 2*data[j]["Terr"]) > (data[j+1]["Verr"] + 2*data[j+1]["Terr"])):
+            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] + data[j+1]["Terr"])):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
     # n = len(data)
@@ -196,27 +196,42 @@ def verificationmin():
                 break
         vector1 = y[ran1]["arr"]
         vector2 = y[ran2]["arr"]
+        
+        print("Parent 1 : ",y[ran1])
+        print("-----------------------------------------------------")
+        print("Parent 2 : ", y[ran2])
+        vector_to_print = []
         vector = []
         prob = [1,1,1,1,2,2,2,2,1,2,1,2,0,0,0]
         for i in range(len(vector1)):
             t = random.choice(prob)
             if(t == 1):
                 vector.append(vector1[i])
+                vector_to_print.append(vector1[i])
             elif(t == 2):
                 vector.append(vector2[i])
+                vector_to_print.append(vector2[i])     
             else:
                 n = random.uniform(-10,10)
-                n = n/(10)**(i+1)    
+                n = n/((10)**(i+1))
+                if(i == 0):
+                    n = n/10    
                 if(i > 5):
                     n = n/10**3
-                vector.append(random.choice([vector1,vector2])[i] + n)
+                tempi = random.choice([vector1,vector2])
+                vector.append(tempi[i] + n)
+                vector_to_print.append(tempi)
+                
         err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
-        print(temp)
+        print("Vector before mutation : ", vector_to_print)
+        print("Vector after mutation : ", vector)
+        print("The vector on getting error",temp)   
+        # print(temp)
         y.append(temp)
     newdata = datasort(y)
     final = []
-    final[:18] = newdata[:18]
+    final[:24] = newdata[:24]
     fin = 0
     for i in range(18,56):
         if(newdata[i]["Child"] == 1):
@@ -440,11 +455,11 @@ def BitComplement():
     print(vector)
     for i in range(1,len(vector)):
         for j in range(random.choice(list(range(3)))):
-            temp = list('{:.27f}'.format(vector[i]))
+            temp = list('{:.27f}'.format(vector[i])) # converts the number to a string, and then converts the string to list in order to apply slight mutation to get the random inital values
             mini = 3
             for k in range(3,len(temp)):
                 if(temp[k] != '0'):
-                    mini = k
+                    mini = k # Decides a minimum bit and maximum bit and then chooses a random bit between a range as shown beow in the code and switches this bit with any nuber between 0-9
                     break
             maxi = len(temp)
             if(i in list(range(5))):
@@ -454,10 +469,10 @@ def BitComplement():
             mid = (mini+maxi)/2
             # for i in range(len(temp) -1, 2):
             #     if(temp[i])
-            rand = random.choice(list(range(int((mini+mid)/2),int((maxi+mid)/2)))) 
-            temp[rand] = str(random.choice(list(range(10))))
+            rand = random.choice(list(range(int((mini+mid)/2),int((maxi+mid)/2)))) # choosing an index(earlier reffered to as bit but use the word index) and then changes this index
+            temp[rand] = str(random.choice(list(range(10))))# changin the value at that index
             # print(i)
-            vector[i] = float(''.join(temp))
+            vector[i] = float(''.join(temp)) # converting the value back to float
     return vector 
    
    
@@ -497,7 +512,7 @@ if __name__ == "__main__":
 
             # -1.257587505299179e-07,
     submissionar = []
-    for i in range(4):
+    for i in range(35):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
