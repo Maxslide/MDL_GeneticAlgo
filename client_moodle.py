@@ -8,6 +8,7 @@ API_ENDPOINT = 'http://10.4.21.147'
 PORT = 3000
 MAX_DEG = 11
 ID = 'i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf'
+Baka_id = '9wAwMbeZDb2T9n57mknTNdOYGuNbbe7PrPx3R7lvdilAjZzxcs'
 # Radhz = 'bTcDQRvCITniLCqT38zzd4CaYs8gPsrnjxyZyIVTiTv6DyX0kX'
 # Suboh_I = 'UD0Abfeia9ERjD84CMjuc2ZzEV7oa7n23m24gFUe1u5AN66tVm'
 arr = [0.0, 0.1240317450077846, -6.211941063144333, 0.04933903144709126, 0.03810848157715883, 8.132366097133624e-05, -6.018769160916912e-05, -1.251585565299179e-07, 3.484096383229681e-08, 4.1614924993407104e-11, -6.732420176902565e-12]
@@ -52,7 +53,7 @@ def datasort(data):
     n = len(data)
     for i in range(n):
         for j in range(n-i-1):
-            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] + data[j+1]["Terr"])):
+            if((data[j]["Verr"]+data[j]["Terr"]) > (data[j+1]["Verr"]+data[j+1]["Terr"])):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
     # n = len(data)
@@ -182,13 +183,13 @@ def verificationmin():
     # print(y[0])
     # prob = fitnessProb(y)
     listpair = []
-    for i in range(0,32):
+    for i in range(0,12):
         ran1 = 0
         ran2 = 0
         while True:
-            ran1 = random.choice(list(range(24)))
+            ran1 = random.choice(list(range(12)))
             while(True):
-                ran2 = random.choice(list(range(24)))
+                ran2 = random.choice(list(range(12)))
                 if(ran2 != ran1):
                     break
             if((ran1,ran2) not in listpair):
@@ -202,9 +203,11 @@ def verificationmin():
         print("Parent 2 : ", y[ran2])
         vector_to_print = []
         vector = []
-        prob = [1,1,1,1,2,2,2,2,1,2,1,2,0,0,0]
+        prob = [1,1,1,1,2,2,2,2,1,2,1,2,0,0,0,0,0,0,1,2]
         for i in range(len(vector1)):
             t = random.choice(prob)
+            if(i == 0):
+                t = random.choice([1,2])
             if(t == 1):
                 vector.append(vector1[i])
                 vector_to_print.append(vector1[i])
@@ -213,7 +216,7 @@ def verificationmin():
                 vector_to_print.append(vector2[i])     
             else:
                 n = random.uniform(-10,10)
-                n = n/((10)**(i+1))
+                n = n/((10)**(i))
                 if(i == 0):
                     n = n/10    
                 if(i > 5):
@@ -222,7 +225,7 @@ def verificationmin():
                 vector.append(tempi[i] + n)
                 vector_to_print.append(tempi)
                 
-        err = get_errors(ID,vector)
+        err = get_errors(Baka_id,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print("Vector before mutation : ", vector_to_print)
         print("Vector after mutation : ", vector)
@@ -231,21 +234,21 @@ def verificationmin():
         y.append(temp)
     newdata = datasort(y)
     final = []
-    final[:24] = newdata[:24]
+    final[:12] = newdata[:12]
     fin = 0
-    for i in range(18,56):
-        if(newdata[i]["Child"] == 1):
-            final.append(newdata[i])
-            fin += 1
-        if(fin == 2):
-            break
-    fin = 0
-    for i in range(18,56):
-        if(newdata[i]["Child"] == 0):
-            final.append(newdata[i])
-            fin += 1
-        if(fin == 4):
-            break
+    # for i in range(9,24):
+    #     if(newdata[i]["Child"] == 1):
+    #         final.append(newdata[i])
+    #         fin += 1
+    #     if(fin == 1):
+    #         break
+    # fin = 0
+    # for i in range(9,24):
+    #     if(newdata[i]["Child"] == 0):
+    #         final.append(newdata[i])
+    #         fin += 1
+    #     if(fin == 2):
+    #         break
     for i in range(len(final)):
         final[i]["Child"] = 0
     with open('a2-b2.json','w') as f:
@@ -449,12 +452,16 @@ def Crossmid():
     # for i in range(len(vector)):
         
 def BitComplement():
-    with open('data.json') as f:
+    with open('OnlyMutation.json') as f:
         data = json.load(f)
-    vector = random.choice(data)["arr"]
+    vector = random.choice(data)
+    for i in data:
+        if(i["Verr"] + i["Terr"] < vector["Verr"] + vector["Terr"]):
+            vector = i
+    vector = vector["arr"]
     print(vector)
     for i in range(1,len(vector)):
-        for j in range(random.choice(list(range(3)))):
+        for j in range(random.choice(list(range(10)))):
             temp = list('{:.27f}'.format(vector[i])) # converts the number to a string, and then converts the string to list in order to apply slight mutation to get the random inital values
             mini = 3
             for k in range(3,len(temp)):
@@ -473,8 +480,18 @@ def BitComplement():
             temp[rand] = str(random.choice(list(range(10))))# changin the value at that index
             # print(i)
             vector[i] = float(''.join(temp)) # converting the value back to float
-    return vector 
-   
+    err = get_errors(ID,vector)
+    temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
+    print(temp)
+    data.append(temp)
+    with open('OnlyMutation.json','w') as f:
+        json.dump(data,f,indent=4)
+    vector = data[0]
+    for i in data:
+        if(i["Verr"] + i["Terr"] < vector["Verr"] + vector["Terr"]):
+            vector = i
+    return vector
+    
    
         
 def Add_To_File(arr,err):
@@ -512,14 +529,14 @@ if __name__ == "__main__":
 
             # -1.257587505299179e-07,
     submissionar = []
-    for i in range(35):
+    for i in range(230):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
         # print(err)
         # if(len(err) == 2 and len(arr) == 11):
         #     Add_To_File(vector,err)
-        submissionar = verificationmin()
+        submissionar = BitComplement()
     for i in submissionar:
         print(submit(ID,i["arr"]))
 
