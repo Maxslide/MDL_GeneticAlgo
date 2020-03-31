@@ -175,7 +175,7 @@ def Cross_2parent():
     
     return
 def verificationmin():
-    with open('a2-b2.json') as f:
+    with open('Bestfromdata.json') as f:
         data = json.load(f)
     y = []
     y[:] = data[:]
@@ -251,7 +251,7 @@ def verificationmin():
     #         break
     for i in range(len(final)):
         final[i]["Child"] = 0
-    with open('a2-b2.json','w') as f:
+    with open('Bestfromdata.json','w') as f:
         json.dump(final,f,indent=2)
     with open('data.json') as f:
         datas = json.load(f)
