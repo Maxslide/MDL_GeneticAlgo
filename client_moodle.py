@@ -8,7 +8,7 @@ API_ENDPOINT = 'http://10.4.21.147'
 PORT = 3000
 MAX_DEG = 11
 ID = 'i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf'
-Baka_id = '9wAwMbeZDb2T9n57mknTNdOYGuNbbe7PrPx3R7lvdilAjZzxcs'
+# Baka_id = '9wAwMbeZDb2T9n57mknTNdOYGuNbbe7PrPx3R7lvdilAjZzxcs'
 # Radhz = 'bTcDQRvCITniLCqT38zzd4CaYs8gPsrnjxyZyIVTiTv6DyX0kX'
 # Suboh_I = 'UD0Abfeia9ERjD84CMjuc2ZzEV7oa7n23m24gFUe1u5AN66tVm'
 arr = [0.0, 0.1240317450077846, -6.211941063144333, 0.04933903144709126, 0.03810848157715883, 8.132366097133624e-05, -6.018769160916912e-05, -1.251585565299179e-07, 3.484096383229681e-08, 4.1614924993407104e-11, -6.732420176902565e-12]
@@ -179,7 +179,7 @@ def verificationmin():
         data = json.load(f)
     y = []
     y[:] = data[:]
-    print(len(y))
+    # print(len(y))
     # print(y[0])
     # prob = fitnessProb(y)
     listpair = []
@@ -225,7 +225,7 @@ def verificationmin():
                 vector.append(tempi[i] + n)
                 vector_to_print.append(tempi)
                 
-        err = get_errors(Baka_id,vector)
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print("Vector before mutation : ", vector_to_print)
         print("Vector after mutation : ", vector)
@@ -234,7 +234,7 @@ def verificationmin():
         y.append(temp)
     newdata = datasort(y)
     final = []
-    final[:12] = newdata[:12]
+    final[:10] = newdata[:10]
     fin = 0
     # for i in range(9,24):
     #     if(newdata[i]["Child"] == 1):
@@ -242,13 +242,13 @@ def verificationmin():
     #         fin += 1
     #     if(fin == 1):
     #         break
-    # fin = 0
-    # for i in range(9,24):
-    #     if(newdata[i]["Child"] == 0):
-    #         final.append(newdata[i])
-    #         fin += 1
-    #     if(fin == 2):
-    #         break
+    fin = 0
+    for i in range(9,24):
+        if(newdata[i]["Child"] == 0):
+            final.append(newdata[i])
+            fin += 1
+        if(fin == 2):
+            break
     for i in range(len(final)):
         final[i]["Child"] = 0
     with open('Bestfromdata.json','w') as f:
@@ -529,14 +529,14 @@ if __name__ == "__main__":
 
             # -1.257587505299179e-07,
     submissionar = []
-    for i in range(230):
+    for i in range(80):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
         # print(err)
         # if(len(err) == 2 and len(arr) == 11):
         #     Add_To_File(vector,err)
-        submissionar = BitComplement()
+        submissionar = verificationmin()
     for i in submissionar:
         print(submit(ID,i["arr"]))
 
