@@ -8,7 +8,7 @@ API_ENDPOINT = 'http://10.4.21.147'
 PORT = 3000
 MAX_DEG = 11
 ID = 'i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf'
-Baka_id = '9wAwMbeZDb2T9n57mknTNdOYGuNbbe7PrPx3R7lvdilAjZzxcs'
+# Baka_id = '9wAwMbeZDb2T9n57mknTNdOYGuNbbe7PrPx3R7lvdilAjZzxcs'
 # Radhz = 'bTcDQRvCITniLCqT38zzd4CaYs8gPsrnjxyZyIVTiTv6DyX0kX'
 # Suboh_I = 'UD0Abfeia9ERjD84CMjuc2ZzEV7oa7n23m24gFUe1u5AN66tVm'
 arr = [0.0, 0.1240317450077846, -6.211941063144333, 0.04933903144709126, 0.03810848157715883, 8.132366097133624e-05, -6.018769160916912e-05, -1.251585565299179e-07, 3.484096383229681e-08, 4.1614924993407104e-11, -6.732420176902565e-12]
@@ -53,7 +53,7 @@ def datasort(data):
     n = len(data)
     for i in range(n):
         for j in range(n-i-1):
-            if((data[j]["Verr"] + 0.5*data[j]["Terr"]) > (data[j+1]["Verr"] + 0.5*data[j+1]["Terr"])):
+            if((data[j]["Verr"] + data[j]["Terr"]) > (data[j+1]["Verr"] + data[j+1]["Terr"])):
                 data[j],data[j+1] = data[j+1],data[j]
     return data
     # n = len(data)
@@ -175,7 +175,7 @@ def Cross_2parent():
     # for i in range(len(vector)):
     return
 def verificationmin():
-    with open('BestfromdataV>T.json') as f:
+    with open('DerivedfromCross2parent.json') as f:
         data = json.load(f)
     y = []
     y[:] = data[:]
@@ -187,9 +187,9 @@ def verificationmin():
         ran1 = 0
         ran2 = 0
         while True:
-            ran1 = random.choice(list(range(10)))
+            ran1 = random.choice(list(range(12)))
             while(True):
-                ran2 = random.choice(list(range(10)))
+                ran2 = random.choice(list(range(12)))
                 if(ran2 != ran1):
                     break
             if((ran1,ran2) not in listpair):
@@ -203,11 +203,9 @@ def verificationmin():
         print("Parent 2 : ", y[ran2])
         vector_to_print = []
         vector = []
-        prob = [1,1,2,2,0,0,0,0]
+        prob = [1,1,2,2,1,2,1,2,0,0,0]
         for i in range(len(vector1)):
             t = random.choice(prob)
-            if(i == 0):
-                t = random.choice([1,2])
             if(t == 1):
                 vector.append(vector1[i])
                 vector_to_print.append(vector1[i])
@@ -222,10 +220,13 @@ def verificationmin():
                 if(i > 5):
                     n = n/10**3
                 tempi = random.choice([vector1,vector2])
-                vector.append(tempi[i]+n)
+                if(i == 2):
+                    vector.append(random.uniform(-10,10))
+                else:
+                    vector.append(tempi[i]+n)
                 vector_to_print.append(tempi)
                 
-        err = get_errors(Baka_id,vector)
+        err = get_errors(ID,vector)
         temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
         print("Vector before mutation : ", vector_to_print)
         print("Vector after mutation : ", vector)
@@ -237,7 +238,7 @@ def verificationmin():
     print("Length of Y: ",len(y))
     # print(newdata)
     final = []
-    final[:9] = newdata[:9]
+    final[:10] = newdata[:10]
     fin = 0
     # for i in range(9,24):
     #     if(newdata[i]["Child"] == 1):
@@ -246,15 +247,15 @@ def verificationmin():
     #     if(fin == 1):
     #         break
     fin = 0
-    for i in range(9,len(y)):
-        if(newdata[i]["Child"] == 0):
+    for i in range(10,len(y)):
+        if(newdata[i]["Child"] == 1):
             final.append(newdata[i])    
             fin += 1
-        if(fin == 1):
+        if(fin == 2):
             break
     for i in range(len(final)):
         final[i]["Child"] = 0
-    with open('BestfromdataV>T.json','w') as f:
+    with open('DerivedfromCross2parent.json','w') as f:
         json.dump(final,f,indent=2)
     with open('data.json') as f:
         datas = json.load(f)
@@ -540,8 +541,8 @@ if __name__ == "__main__":
         # if(len(err) == 2 and len(arr) == 11):
         #     Add_To_File(vector,err)
         submissionar = verificationmin()
-    # for i in submissionar:
-        # print(submit(ID,i["arr"]))
+    for i in submissionar:
+        print(submit(ID,i["arr"]))
 
     # submit_status = submit('i0ZxSBn9KTktTOfG5xlLZ9CrNY2hEhg8SnLisL4CHNHGtYuqLf', list(-np.arange(0,1.1,0.1)))
     # assert "submitted" in submit_status
