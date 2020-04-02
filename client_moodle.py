@@ -195,6 +195,7 @@ def verificationmin():
             if((ran1,ran2) not in listpair):
                 listpair.append((ran1,ran2))
                 break
+        print(y[ran1])
         vector1 = y[ran1]["arr"]
         vector2 = y[ran2]["arr"]
         
@@ -234,6 +235,7 @@ def verificationmin():
         # print(temp)
         # if(temp["Terr"] < temp["Verr"]):
         #     y.append(temp)
+        y.append(temp)
     newdata = datasort(y)
     print("Length of Y: ",len(y))
     # print(newdata)
@@ -485,6 +487,7 @@ def BitComplement():
             # print(i)
             vector[i] = float(''.join(temp)) # converting the value back to float
     err = get_errors(ID,vector)
+    submit(ID,vector)
     temp = {"arr" : vector, "Terr": err[0], "Verr" : err[1],"Child" : 1}
     print(temp)
     data.append(temp)
@@ -533,7 +536,7 @@ if __name__ == "__main__":
 
             # -1.257587505299179e-07,
     submissionar = []
-    for i in range(50):
+    for i in range(100):
         # vector = BitComplement()
         # err = get_errors(ID, vector)
         # assert len(err) == 2
